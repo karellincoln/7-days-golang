@@ -54,9 +54,11 @@ func (r *router) getRoute(method string, path string) (*node, map[string]string)
 		return nil, nil
 	}
 
+	// 查找匹配到的根节点
 	n := root.search(searchParts, 0)
 
 	if n != nil {
+		// 处理path中的参数
 		parts := parsePattern(n.pattern)
 		for index, part := range parts {
 			if part[0] == ':' {
