@@ -1,4 +1,4 @@
-module github.com/karellincoln/7-day-golang
+module github.com/karellincoln/7-day-golang/gee-web
 
 go 1.17
 
