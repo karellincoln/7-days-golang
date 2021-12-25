@@ -2,12 +2,21 @@ package gee_orm
 
 import (
 	"database/sql"
+	"github.com/karellincoln/7-day-golang/gee-orm/dialect"
 	"github.com/karellincoln/7-day-golang/gee-orm/log"
 	"github.com/karellincoln/7-day-golang/gee-orm/session"
 )
 
 type Engine struct {
-	db *sql.DB
+	db      *sql.DB
+	dialect dialect.Dialect
+}
+
+func (engine *Engine) Close() {
+	if err := engine.db.Close(); err != nil {
+		log.Error("Failed to close database")
+	}
+	log.Info("Close database success")
 }
 
 func NewEngine(driver, source string) (e *Engine, err error) {
@@ -21,18 +30,17 @@ func NewEngine(driver, source string) (e *Engine, err error) {
 		log.Error(err)
 		return
 	}
-	e = &Engine{db: db}
+	// make sure the specific dialect exists
+	dial, ok := dialect.GetDialect(driver)
+	if !ok {
+		log.Errorf("dialect %s Not Found", driver)
+		return
+	}
+	e = &Engine{db: db, dialect: dial}
 	log.Info("Connect database success")
 	return
 }
 
-func (engine *Engine) Close() {
-	if err := engine.db.Close(); err != nil {
-		log.Error("Failed to close database")
-	}
-	log.Info("Close database success")
-}
-
 func (engine *Engine) NewSession() *session.Session {
-	return session.New(engine.db)
+	return session.New(engine.db, engine.dialect)
 }
