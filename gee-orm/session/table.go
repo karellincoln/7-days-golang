@@ -19,7 +19,7 @@ func (s *Session) Model(value interface{}) *Session {
 
 func (s *Session) RefTable() *schema.Schema {
 	if s.refTable == nil {
-		log.Error("Modle is not set")
+		log.Error("Model is not set")
 	}
 	return s.refTable
 }
